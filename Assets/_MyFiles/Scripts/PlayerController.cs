@@ -26,15 +26,25 @@ public class PlayerController : MonoBehaviour
         playerInput.Main.SelectLocation.performed += SelectLocation;
         playerInput.Main.Deselect.performed += DeselectLocation;
         playerInput.Main.ConfirmAnswer.performed += ConfirmAnswer;
+        playerInput.Main.Debug_Solve.performed += AutoSolve;
+    }
+
+    private void AutoSolve(InputAction.CallbackContext context)
+    {
+        if (!hasStartedSelection) return;
+
+        GameplayUI.Instance.AutoSolve();
     }
 
     private void ConfirmAnswer(InputAction.CallbackContext context)
     {
         if (hasStartedSelection == false) return;
 
-        if(owningPlayer.GetGUI().IsAnswerCorrect())
+        if(GameplayUI.Instance.IsAnswerCorrect())
         {
             ExecuteSelection();
+
+            GameManager.Instance.IncrementMoveCount();
 
             DeselectLocation(context);
         }
@@ -44,10 +54,36 @@ public class PlayerController : MonoBehaviour
     {
         if (hasStartedSelection) return;
 
-        ShapeGenerator.Instance.GenerateTriangleFromLine(owningPlayer.transform.position, UpdateMousePosition(), owningPlayer.GetGUI());
-        owningPlayer.GetGUI().SetFieldActive(true);
+        Vector3 targetLocation = UpdateMousePosition();
+        if (IsStraightLine(targetLocation))
+        {
+            ShapeGenerator.Instance.SetLine(owningPlayer.transform.position, targetLocation);
+        }
+        else
+        {
+            ShapeGenerator.Instance.GenerateTriangleFromLine(owningPlayer.transform.position, targetLocation);
+        }
+
+        GameplayUI.Instance.SetFieldActive(true);
 
         hasStartedSelection = true;
+    }
+
+    
+
+    private bool IsStraightLine(Vector3 targetPosition)
+    {
+        if (Mathf.Abs(targetPosition.y - owningPlayer.transform.position.y) <= 0.001f)
+        {
+            return true;
+        }
+
+        if (Mathf.Abs(targetPosition.x - owningPlayer.transform.position.x) <= 0.001f)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private void DeselectLocation(InputAction.CallbackContext context)
@@ -55,9 +91,9 @@ public class PlayerController : MonoBehaviour
         hasStartedSelection = false;
 
         ShapeGenerator.Instance.ClearMesh();
-        owningPlayer.GetGUI().ClearText();
+        GameplayUI.Instance.ClearText();
 
-        owningPlayer.GetGUI().SetFieldActive(false);
+        GameplayUI.Instance.SetFieldActive(false);
     }
 
     private void ExecuteSelection()

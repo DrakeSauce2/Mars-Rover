@@ -12,6 +12,9 @@ public class Barrier : MonoBehaviour
             if (player)
             {
                 player.ResetToPreviousLocation();
+
+                GameManager.Instance.IncrementCollisionCount();
+
                 Debug.Log("Player Collided!");
             }
 

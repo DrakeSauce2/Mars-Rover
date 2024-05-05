@@ -62,6 +62,15 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Debug_Solve"",
+                    ""type"": ""Button"",
+                    ""id"": ""e8cce4c0-908b-4ed4-9453-e998d69130b5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -108,6 +117,17 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
                     ""action"": ""ConfirmAnswer"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b008e5de-2dab-42a2-8c53-2cab3980b94d"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Debug_Solve"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -120,6 +140,7 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
         m_Main_CursorPosition = m_Main.FindAction("CursorPosition", throwIfNotFound: true);
         m_Main_Deselect = m_Main.FindAction("Deselect", throwIfNotFound: true);
         m_Main_ConfirmAnswer = m_Main.FindAction("ConfirmAnswer", throwIfNotFound: true);
+        m_Main_Debug_Solve = m_Main.FindAction("Debug_Solve", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -185,6 +206,7 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Main_CursorPosition;
     private readonly InputAction m_Main_Deselect;
     private readonly InputAction m_Main_ConfirmAnswer;
+    private readonly InputAction m_Main_Debug_Solve;
     public struct MainActions
     {
         private @IA_Player m_Wrapper;
@@ -193,6 +215,7 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
         public InputAction @CursorPosition => m_Wrapper.m_Main_CursorPosition;
         public InputAction @Deselect => m_Wrapper.m_Main_Deselect;
         public InputAction @ConfirmAnswer => m_Wrapper.m_Main_ConfirmAnswer;
+        public InputAction @Debug_Solve => m_Wrapper.m_Main_Debug_Solve;
         public InputActionMap Get() { return m_Wrapper.m_Main; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -214,6 +237,9 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
             @ConfirmAnswer.started += instance.OnConfirmAnswer;
             @ConfirmAnswer.performed += instance.OnConfirmAnswer;
             @ConfirmAnswer.canceled += instance.OnConfirmAnswer;
+            @Debug_Solve.started += instance.OnDebug_Solve;
+            @Debug_Solve.performed += instance.OnDebug_Solve;
+            @Debug_Solve.canceled += instance.OnDebug_Solve;
         }
 
         private void UnregisterCallbacks(IMainActions instance)
@@ -230,6 +256,9 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
             @ConfirmAnswer.started -= instance.OnConfirmAnswer;
             @ConfirmAnswer.performed -= instance.OnConfirmAnswer;
             @ConfirmAnswer.canceled -= instance.OnConfirmAnswer;
+            @Debug_Solve.started -= instance.OnDebug_Solve;
+            @Debug_Solve.performed -= instance.OnDebug_Solve;
+            @Debug_Solve.canceled -= instance.OnDebug_Solve;
         }
 
         public void RemoveCallbacks(IMainActions instance)
@@ -253,5 +282,6 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
         void OnCursorPosition(InputAction.CallbackContext context);
         void OnDeselect(InputAction.CallbackContext context);
         void OnConfirmAnswer(InputAction.CallbackContext context);
+        void OnDebug_Solve(InputAction.CallbackContext context);
     }
 }

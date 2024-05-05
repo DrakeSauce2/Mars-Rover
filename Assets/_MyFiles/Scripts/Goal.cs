@@ -12,6 +12,10 @@ public class Goal : MonoBehaviour
             if (player)
             {
                 player.DisablePlayer();
+                GameplayUI.Instance.SetEndScreenActive(true);
+
+                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.visible = true;
             }
         }
     }

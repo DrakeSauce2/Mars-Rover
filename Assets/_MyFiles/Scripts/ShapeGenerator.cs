@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class ShapeGenerator : MonoBehaviour
@@ -26,7 +27,14 @@ public class ShapeGenerator : MonoBehaviour
 
     public float GetTargetAngle()
     {
-        return targetAngle;
+        if (GameplayUI.Instance.IsAnswerInDegrees())
+        {
+            return targetAngle * Mathf.Rad2Deg;
+        }
+        else
+        {
+            return targetAngle;
+        }
     }
 
     #region Shape Creation
@@ -37,7 +45,18 @@ public class ShapeGenerator : MonoBehaviour
         meshFilter.mesh = null;
     }
 
-    public void GenerateTriangleFromLine(Vector2 startPos, Vector2 endPosition, GameplayUI gui)
+    public void SetLine(Vector3 a, Vector3 b)
+    {
+        Vector3 midPoint = FindMidpoint(a, b);
+
+        float lineLength = Vector3.Distance(a, b);
+
+        SetTargetDistanceAndAngle((b - a), lineLength);
+
+        GameplayUI.Instance.SetLineLength(lineLength, midPoint);
+    }
+
+    public void GenerateTriangleFromLine(Vector2 startPos, Vector2 endPosition)
     {
         meshFilter.mesh.Clear();
 
@@ -47,7 +66,7 @@ public class ShapeGenerator : MonoBehaviour
         Vector3[] vertices = new Vector3[3];
         vertices[0] = new Vector3(startPos.x, startPos.y, 0); // start point
         vertices[1] = new Vector3(endPosition.x, endPosition.y, 0); // end point
-        vertices[2] = new Vector3(endPosition.x, startPos.y, 0); // I want this to be the imaginary
+        vertices[2] = new Vector3(endPosition.x, startPos.y, 0); // right angle point
         
         mesh.vertices = vertices;
         mesh.triangles = GetTriangle(vertices);
@@ -57,14 +76,15 @@ public class ShapeGenerator : MonoBehaviour
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
 
-        UpdateGUISideLengths(vertices, gui);
+        UpdateGUISideLengths(vertices);
         SetTargetDistanceAndAngle(vertices);
 
         Vector3 direction = vertices[1] - vertices[0];
         float xDirection = direction.x >= 0 ? 1 : -1;
         float yDirection = direction.y >= 0 ? 1 : -1;
 
-        gui.SetHypTextZAngle(targetAngle * xDirection * yDirection);
+        float targetAngle = Mathf.Atan2(Mathf.Abs(direction.y), Mathf.Abs(direction.x)) * Mathf.Rad2Deg;
+        GameplayUI.Instance.SetHypTextZAngle(targetAngle * xDirection * yDirection);
     }
 
     private void SetTargetDistanceAndAngle(Vector3[] verts)
@@ -76,10 +96,21 @@ public class ShapeGenerator : MonoBehaviour
         
         targetAngle = Mathf.Atan(oppositeLength / adjacentLength);
 
-        bool IsDegrees = true;
-        if (IsDegrees)
+        Debug.Log("Distance: " + targetDistance + " Angle: " + targetAngle);
+    }
+
+    private void SetTargetDistanceAndAngle(Vector3 direction, float distance)
+    {
+        targetDistance = distance;
+
+        if (Mathf.Approximately(direction.y, 0))
         {
-            targetAngle *= Mathf.Rad2Deg;
+            targetAngle = direction.x >= 0 ? 0 : Mathf.PI;
+        }
+
+        if (Mathf.Approximately(direction.x, 0))
+        {
+            targetAngle = direction.y >= 0 ? Mathf.PI / 2 : (3 * Mathf.PI) / 2;
         }
 
         Debug.Log("Distance: " + targetDistance + " Angle: " + targetAngle);
@@ -87,7 +118,7 @@ public class ShapeGenerator : MonoBehaviour
 
     private int[] GetTriangle(Vector3[] verts)
     {
-        int p1, p2, p3;
+        byte p1, p2, p3;
         SetTriangleVertPointValue(verts, out p1, out p2, out p3);
 
         int[] triangles = new int[3];
@@ -98,7 +129,7 @@ public class ShapeGenerator : MonoBehaviour
         return triangles;
     }
 
-    private void SetTriangleVertPointValue(Vector3[] verts, out int p1, out int p2, out int p3)
+    private void SetTriangleVertPointValue(Vector3[] verts, out byte p1, out byte p2, out byte p3)
     {
         Vector3 direction = verts[1] - verts[0];
         if (direction.y >= 0 && direction.x >= 0)
@@ -127,7 +158,7 @@ public class ShapeGenerator : MonoBehaviour
         }
     }
 
-    private void UpdateGUISideLengths(Vector3[] verts, GameplayUI gui)
+    private void UpdateGUISideLengths(Vector3[] verts)
     {
         Vector3 adjMidpoint = FindMidpoint(verts[0], verts[2]);
 
@@ -139,7 +170,7 @@ public class ShapeGenerator : MonoBehaviour
         float xDirection = direction.x >= 0 ? 1 : -1;
         float yDirection = direction.y >= 0 ? 1 : -1;
 
-        gui.SetTriangleSideLengths
+        GameplayUI.Instance.SetTriangleSideLengths
             (
                 Vector2.Distance(verts[2], verts[0]) * xDirection,
                 Vector2.Distance(verts[1], verts[2]) * yDirection,
@@ -172,7 +203,7 @@ public class ShapeGenerator : MonoBehaviour
 
     #endregion
 
-    private Vector3 FindMidpoint(Vector3 p1, Vector3 p2)
+    public static Vector3 FindMidpoint(Vector3 p1, Vector3 p2)
     {
         return (p1 + p2) / 2f;
     }

@@ -79,7 +79,7 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Rotation: 225
-    - _Scale: 0.1
+    - _Scale: 5
     m_Colors:
     - _Color: {r: 0, g: 0.7922032, b: 1, a: 1}
     - _Direction: {r: 0.005, g: 0.005, b: 0, a: 0}

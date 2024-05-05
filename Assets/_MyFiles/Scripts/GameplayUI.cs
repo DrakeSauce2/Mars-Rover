@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Linq.Expressions;
+using UnityEngine.UI;
 
 public class GameplayUI : MonoBehaviour
 {
+    public static GameplayUI Instance;
+
     [Header("Input Field")]
     [SerializeField] private GameObject inputField;
 
@@ -17,10 +20,41 @@ public class GameplayUI : MonoBehaviour
     [Header("Answer Boxes")]
     [SerializeField] private AnswerBox rValueAB;
     [SerializeField] private AnswerBox thetaValueAB;
+    [SerializeField] private Toggle toggleRadDeg;
+
+    [Header("EndScreen")]
+    [SerializeField] private TextMeshProUGUI moveCountText;
+    [SerializeField] private TextMeshProUGUI collisionsCountText;
+    [SerializeField] private GameObject endScreen;
+    [SerializeField] private Button continueButton;
+
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(this);
+    }
+
+    private void Start()
+    {
+        continueButton.onClick.AddListener(GameManager.Instance.ContinueToTargetScene);
+    }
 
     public void SetFieldActive(bool state)
     {
         inputField.SetActive(state);
+    }
+
+    public void SetEndScreenActive(bool state)
+    {
+        endScreen.SetActive(state);
+
+        moveCountText.text = "Total Moves: " + GameManager.Instance.GetMoveCount().ToString();
+        collisionsCountText.text = "Collisions: " + GameManager.Instance.GetCollisionsCount().ToString();
+    }
+
+    public bool IsAnswerInDegrees()
+    {
+        return toggleRadDeg.isOn;
     }
 
     public void SetTriangleSideLengths(float adjSideLength, float oppSideLength, Vector3 adjWorldPos, Vector3 oppWorldPos, Vector3 hypWorldPos)
@@ -29,14 +63,22 @@ public class GameplayUI : MonoBehaviour
         oppSideText.transform.position = Camera.main.WorldToScreenPoint(oppWorldPos);
         hypSideText.transform.position = Camera.main.WorldToScreenPoint(hypWorldPos);
 
-        adjSideText.text = "" + adjSideLength;
-        oppSideText.text = "" + oppSideLength;
+        adjSideText.text = adjSideLength.ToString();
+        oppSideText.text = oppSideLength.ToString();
+
         hypSideText.text = "r = √(" + adjSideLength + "² + " + oppSideLength + "²" + ")";
     }
 
     public void SetHypTextZAngle(float angle)
     {
         hypSideText.transform.localEulerAngles = new Vector3(hypSideText.transform.localEulerAngles.x, hypSideText.transform.localEulerAngles.y, angle);
+    }
+
+    public void SetLineLength(float lineLength, Vector3 midPoint)
+    {
+        adjSideText.transform.position = Camera.main.WorldToScreenPoint(midPoint);
+
+        adjSideText.text = lineLength.ToString();
     }
 
     public void ClearText()
@@ -91,6 +133,12 @@ public class GameplayUI : MonoBehaviour
         }
 
         return true;
+    }
+
+    public void AutoSolve()
+    {
+        rValueAB.SetTextFromValue(ShapeGenerator.Instance.GetTargetDistance());
+        thetaValueAB.SetTextFromValue(ShapeGenerator.Instance.GetTargetAngle());
     }
 
 }

@@ -6,12 +6,7 @@ using static Player;
 
 public class Player : MonoBehaviour
 {
-
-    [SerializeField] private GameplayUI gui;
-
     private PlayerController playerController;
-
-    public GameplayUI GetGUI() { return gui; }
 
     [SerializeField] private float turnSpeed = 100f;
 
@@ -42,13 +37,10 @@ public class Player : MonoBehaviour
 
         preMoveLocation = transform.position;
 
-        // Get the direction to the target position
         Vector2 direction = (targetPosition - transform.position).normalized;
 
-        // Calculate the target rotation angle
         float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        // Rotate towards the target position
         while (Mathf.Abs(Mathf.DeltaAngle(transform.eulerAngles.z, targetAngle)) > 0.01f)
         {
             float angle = Mathf.MoveTowardsAngle(transform.eulerAngles.z, targetAngle, turnSpeed * Time.deltaTime);
@@ -58,7 +50,6 @@ public class Player : MonoBehaviour
 
         transform.eulerAngles = new Vector3(0, 0, targetAngle);
 
-        // Move towards the target position
         while (Vector2.Distance(transform.position, targetPosition) > 0.1f)
         {
             transform.position = Vector2.MoveTowards(transform.position, targetPosition, 5f * Time.deltaTime);

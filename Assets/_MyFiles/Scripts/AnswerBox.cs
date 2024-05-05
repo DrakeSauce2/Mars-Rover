@@ -29,6 +29,11 @@ public class AnswerBox : MonoBehaviour
         inputField.text = filteredValue;
     }
 
+    public void SetTextFromValue(float value)
+    {
+        inputField.text = value.ToString();
+    }
+
     public void ClearValue()
     {
         inputField.text = string.Empty;
