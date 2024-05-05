@@ -27,6 +27,12 @@ public class PlayerController : MonoBehaviour
         playerInput.Main.Deselect.performed += DeselectLocation;
         playerInput.Main.ConfirmAnswer.performed += ConfirmAnswer;
         playerInput.Main.Debug_Solve.performed += AutoSolve;
+        playerInput.Main.ExitButton.performed += ExitGame;
+    }
+
+    private void ExitGame(InputAction.CallbackContext context)
+    {
+        Application.Quit();
     }
 
     private void AutoSolve(InputAction.CallbackContext context)

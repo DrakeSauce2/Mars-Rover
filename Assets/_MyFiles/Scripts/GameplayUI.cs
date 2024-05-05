@@ -101,7 +101,7 @@ public class GameplayUI : MonoBehaviour
         float targetRValue = ShapeGenerator.Instance.GetTargetDistance();
         float targetThetaValue = ShapeGenerator.Instance.GetTargetAngle();
 
-        float tolerance = 0.001f;
+        float tolerance = 0.01f;
 
         if (Mathf.Abs(rValue - targetRValue) > tolerance)
         {

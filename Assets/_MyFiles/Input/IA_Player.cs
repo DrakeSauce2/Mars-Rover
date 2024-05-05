@@ -71,6 +71,15 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ExitButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""65316bec-c0be-4ec7-9b5d-b52e1528e063"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -128,6 +137,17 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
                     ""action"": ""Debug_Solve"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""710fc363-181d-4d8a-b8cb-804b7a54b6b5"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ExitButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -141,6 +161,7 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
         m_Main_Deselect = m_Main.FindAction("Deselect", throwIfNotFound: true);
         m_Main_ConfirmAnswer = m_Main.FindAction("ConfirmAnswer", throwIfNotFound: true);
         m_Main_Debug_Solve = m_Main.FindAction("Debug_Solve", throwIfNotFound: true);
+        m_Main_ExitButton = m_Main.FindAction("ExitButton", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -207,6 +228,7 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
     private readonly InputAction m_Main_Deselect;
     private readonly InputAction m_Main_ConfirmAnswer;
     private readonly InputAction m_Main_Debug_Solve;
+    private readonly InputAction m_Main_ExitButton;
     public struct MainActions
     {
         private @IA_Player m_Wrapper;
@@ -216,6 +238,7 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
         public InputAction @Deselect => m_Wrapper.m_Main_Deselect;
         public InputAction @ConfirmAnswer => m_Wrapper.m_Main_ConfirmAnswer;
         public InputAction @Debug_Solve => m_Wrapper.m_Main_Debug_Solve;
+        public InputAction @ExitButton => m_Wrapper.m_Main_ExitButton;
         public InputActionMap Get() { return m_Wrapper.m_Main; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -240,6 +263,9 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
             @Debug_Solve.started += instance.OnDebug_Solve;
             @Debug_Solve.performed += instance.OnDebug_Solve;
             @Debug_Solve.canceled += instance.OnDebug_Solve;
+            @ExitButton.started += instance.OnExitButton;
+            @ExitButton.performed += instance.OnExitButton;
+            @ExitButton.canceled += instance.OnExitButton;
         }
 
         private void UnregisterCallbacks(IMainActions instance)
@@ -259,6 +285,9 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
             @Debug_Solve.started -= instance.OnDebug_Solve;
             @Debug_Solve.performed -= instance.OnDebug_Solve;
             @Debug_Solve.canceled -= instance.OnDebug_Solve;
+            @ExitButton.started -= instance.OnExitButton;
+            @ExitButton.performed -= instance.OnExitButton;
+            @ExitButton.canceled -= instance.OnExitButton;
         }
 
         public void RemoveCallbacks(IMainActions instance)
@@ -283,5 +312,6 @@ public partial class @IA_Player: IInputActionCollection2, IDisposable
         void OnDeselect(InputAction.CallbackContext context);
         void OnConfirmAnswer(InputAction.CallbackContext context);
         void OnDebug_Solve(InputAction.CallbackContext context);
+        void OnExitButton(InputAction.CallbackContext context);
     }
 }

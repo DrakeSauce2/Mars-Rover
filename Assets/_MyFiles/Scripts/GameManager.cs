@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     [Header("Next Level")]
-    [SerializeField] private SceneAsset targetScene;
+    [SerializeField] private string targetSceneName;
 
     [Header("Stat Counts")]
     [SerializeField] private int moveCount = 0;
@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
 
     public void ContinueToTargetScene()
     {
-        SceneManager.LoadScene(targetScene.name);
+        SceneManager.LoadScene(targetSceneName);
     }
 
     public void IncrementMoveCount() => moveCount++;
